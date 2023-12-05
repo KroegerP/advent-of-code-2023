@@ -1,6 +1,6 @@
 import os
 import sys
-from four import PartOne, PartTwo
+from five import PartOne, PartTwo
 from utils import read_file
 
 
