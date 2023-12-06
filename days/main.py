@@ -12,7 +12,7 @@ def main():
         f"{os.path.join(os.path.dirname(os.path.abspath(__file__)), f'{sys.argv[1]}/data.txt')}"
     )
 
-    PartOne(data)
+    # PartOne(data)
 
     PartTwo(data)
 

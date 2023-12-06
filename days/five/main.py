@@ -52,14 +52,14 @@ def get_map_list(file_contents: list[str], cur_idx):
         cur_list.append(file_contents[cur_idx + idx])
         idx += 1
 
-        if (cur_idx + idx + 1) > len(file_contents):
+        if (cur_idx + idx + 1) >= len(file_contents):
             break
 
     return cur_list
 
 
 def find_matching_tuples(tuple_list: list[tuple], current_numbers: list[int]):
-    found_pairs = [False] * len(current_numbers)
+    found_pairs = current_numbers
 
     source_mappings = [values[0] for values in tuple_list]
     destination_mappings = [values[1] for values in tuple_list]
@@ -72,11 +72,35 @@ def find_matching_tuples(tuple_list: list[tuple], current_numbers: list[int]):
 
             found_pairs[index] = mapped_value
 
-    for index, pair in enumerate(found_pairs):
-        if not pair:
-            found_pairs[index] = current_numbers[index]
-
     return found_pairs
+
+
+# def get_data_values(
+#     dest: int, source: int, range_len: int, parsed_numbers: list[int], cur_list, i=0
+# ):
+#     if i == range_len:
+#         return cur_list
+
+#     cur_value = source + i
+
+#     # print(cur_list)
+
+#     if cur_value in parsed_numbers:
+#         cur_list.append((cur_value, (dest + i)))
+
+#     new_list = get_data_values(dest, source, range_len, parsed_numbers, cur_list, i + 1)
+
+#     return new_list
+
+
+# def get_data_values(
+#     dest: int, source: int, range_len: int, parsed_numbers: list[int], cur_list, i=0
+# ):
+#     # incremented_numbers = [p + source for p in parsed_numbers]
+#     found_pairs = []
+
+#     for p in parsed_numbers:
+#         if p >= source and p <= range_len + source:
 
 
 def PartOne(file_contents: list[str]):
@@ -109,26 +133,31 @@ def PartOne(file_contents: list[str]):
 
             map_list = get_map_list(file_contents, index + 1)
 
-            # print(map_list)
+            print(map_list)
 
             numbers_map = []
 
             for mapping_line in map_list:
-                dest_start, dest_final_idx = get_full_str_number(mapping_line, 0)
-                source_start, source_final_idx = get_full_str_number(
-                    mapping_line, dest_final_idx + 1
-                )
-                range_len, _ = get_full_str_number(mapping_line, source_final_idx + 1)
+                [dest, source, range_len] = [int(num) for num in mapping_line.split()]
 
-                # print(f"Dest: {dest_start}, Source: {source_start}, Range: {range_len}")
+                print(f"Dest: {dest}, Source: {source}, Range: {range_len}")
 
-                dest_range = [int(dest_start) + i for i in range(range_len)]
-                source_range = [int(source_start) + i for i in range(range_len)]
+                data_values = [
+                    (source + i, dest + i)
+                    for i in range(range_len)
+                    if (source + i) in parsed_numbers
+                ]
 
-                mapped_ranged = zip(source_range, dest_range)
+                # data_values = get_data_values(
+                #     dest, source, range_len, parsed_numbers, []
+                # )
+
+                # print(f"Data Values {data_values}")
 
                 # numbers_map[mapping_key] += mapped_ranged
-                numbers_map += mapped_ranged
+                numbers_map += data_values
+
+            print(numbers_map)
 
             parsed_numbers = find_matching_tuples(numbers_map, parsed_numbers)
 
@@ -160,5 +189,90 @@ def PartOne(file_contents: list[str]):
     return lowest_location
 
 
+def expand_seeds(parsed_numbers: list[int]):
+    new_seeds = []
+    for index in range(int(len(parsed_numbers) / 2)):
+        if index % 2 == 1:
+            continue
+        new_seeds += [
+            parsed_numbers[index] + n_seed
+            for n_seed in range(parsed_numbers[index + 1])
+        ]
+
+        print("Cur Seeds \n")
+        print(new_seeds)
+
+    return new_seeds
+
+
 def PartTwo(file_contents: list[str]):
+    lowest_location = 0
+    parsed_numbers = str_to_int(file_contents[0].split(":")[-1], split_string=True)
+
+    print(parsed_numbers)
+
+    parsed_numbers = expand_seeds(parsed_numbers)
+    print(parsed_numbers)
+
     return
+
+    # return
+
+    # print(f"Seed Map: \n {seed_map}")
+
+    # numbers_map = {}
+
+    for index, line in enumerate(file_contents):
+        if index < 2:
+            continue
+        try:
+            first_char = line[0]
+        except IndexError:
+            continue
+
+        if first_char.isalpha() and not first_char.isnumeric():
+            a, b = parse_a_to_b_map(line)
+
+            # print(f"Getting {a} to {b} mapping")
+            mapping_key = f"{a}-to-{b}"
+
+            # numbers_map[mapping_key] = []
+
+            map_list = get_map_list(file_contents, index + 1)
+
+            print(map_list)
+
+            numbers_map = []
+
+            for mapping_line in map_list:
+                [dest, source, range_len] = [int(num) for num in mapping_line.split()]
+
+                print(f"Dest: {dest}, Source: {source}, Range: {range_len}")
+
+                data_values = [
+                    (source + i, dest + i)
+                    for i in range(range_len)
+                    if (source + i) in parsed_numbers
+                ]
+
+                # data_values = get_data_values(
+                #     dest, source, range_len, parsed_numbers, []
+                # )
+
+                # print(f"Data Values {data_values}")
+
+                # numbers_map[mapping_key] += mapped_ranged
+                numbers_map += data_values
+
+            print(numbers_map)
+
+            parsed_numbers = find_matching_tuples(numbers_map, parsed_numbers)
+
+            print(f"New Numbers for {mapping_key}: {parsed_numbers}")
+
+    print(parsed_numbers)
+    print(min(parsed_numbers))
+
+    # print(lowest_location)
+
+    return lowest_location
