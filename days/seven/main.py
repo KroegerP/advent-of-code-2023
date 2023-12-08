@@ -47,11 +47,15 @@ class CamelCardsHand:
 
         # print(f"J's: {freq_map.get('J', 0)}")
 
-        if num_to_match == 5 and freq_map.get("J") == 5:
+        j_freq = freq_map.get("J")
+
+        del freq_map["J"]
+
+        if num_to_match == 5 and j_freq == 5:
             return True
 
         if use_j:
-            matching_num = num_to_match - freq_map.get("J")
+            matching_num = num_to_match - j_freq
         else:
             matching_num = num_to_match
 
@@ -61,10 +65,10 @@ class CamelCardsHand:
                     c for c in list(freq_map.values()) if c == (num_to_match)
                 ]
 
-                if freq_map["J"] > 0 and use_j:
+                if j_freq > 0 and use_j:
                     match_count.append("J")
                     # print(f"MATCH COUNT: {match_count}, HAND: {self.hand}")
-                elif not use_j and freq_map["J"] == 0:
+                elif not use_j and j_freq == 0:
                     return True
 
                 if len(match_count) < 2:
@@ -91,7 +95,7 @@ class CamelCardsHand:
             return
 
         if self.is_five_of_a_kind():
-            print(f"{self.hand} 5 MATCHES.")
+            # print(f"{self.hand} 5 MATCHES.")
             self.hand_type = CARD_TYPES["Five"]
             return
 
@@ -102,20 +106,20 @@ class CamelCardsHand:
 
         if self.is_three_of_a_kind():
             if self.has_two_of_a_kind(two_pairs=True, use_j=False):
-                print(f"{self.hand} FULL HOUSE.")
+                # print(f"{self.hand} FULL HOUSE.")
                 self.hand_type = CARD_TYPES["Full"]
             else:
-                print(f"{self.hand} 3 MATCHES.")
+                # print(f"{self.hand} 3 MATCHES.")
                 self.hand_type = CARD_TYPES["Three"]
             return
 
         if self.has_two_of_a_kind(two_pairs=True):
-            print(f"{self.hand} TWO PAIRS.")
+            # print(f"{self.hand} TWO PAIRS.")
             self.hand_type = CARD_TYPES["TwoPair"]
             return
 
         if self.has_two_of_a_kind():
-            print(f"{self.hand} ONE PAIR.")
+            # print(f"{self.hand} ONE PAIR.")
             self.hand_type = CARD_TYPES["OnePair"]
             return
 
