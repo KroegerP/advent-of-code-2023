@@ -1,6 +1,6 @@
 import os
 import sys
-from seven import PartOne, PartTwo
+from eight import PartOne, PartTwo
 from utils import read_file
 
 
