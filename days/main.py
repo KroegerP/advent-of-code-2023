@@ -1,6 +1,6 @@
 import os
 import sys
-from six import PartOne
+from six import PartOne, PartTwo
 from utils import read_file
 
 
@@ -14,7 +14,7 @@ def main():
 
     PartOne(data)
 
-    # PartTwo(data)
+    PartTwo(data)
 
 
 if __name__ == "__main__":
